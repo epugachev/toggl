@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="init-db" author="e.n.pugachev@yandex.ru">
+        <createTable tableName="workspace_ref">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_workspace_ref"/>
+            </column>
+            <column name="name" type="varchar2(300)"/>
+            <column name="api_token" type="varchar2(50)"/>
+        </createTable>
+
+        <createTable tableName="user_ref">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_user_ref"/>
+            </column>
+            <column name="api_token" type="varchar2(50)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_user_ref_api_token"/>
+            </column>
+            <column name="full_name" type="varchar2(300)"/>
+            <column name="default_workspace_id" type="bigint">
+                <constraints foreignKeyName="fk_user_ref_default_workspace_id"
+                             referencedTableName="workspace_ref"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tag_ref">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_tag_ref"/>
+            </column>
+            <column name="workspace_id" type="bigint">
+                <constraints foreignKeyName="tag_ref_workspace_id"
+                             referencedTableName="workspace_ref"
+                             referencedColumnNames="id"
+                             nullable="false"/>
+            </column>
+            <column name="name" type="varchar2(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="tag_ref" indexName="indx_tag_ref_name">
+            <column name="name"/>
+        </createIndex>
+
+        <createTable tableName="project_ref">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_project_ref"/>
+            </column>
+            <column name="workspace_id" type="bigint">
+                <constraints foreignKeyName="project_ref_workspace_id"
+                             referencedTableName="workspace_ref"
+                             referencedColumnNames="id"
+                             nullable="false"/>
+            </column>
+            <column name="name" type="varchar2(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="project_ref" indexName="indx_project_ref_name">
+            <column name="name"/>
+        </createIndex>
+
+        <createTable tableName="time_entry_jn">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="pk_time_entry_jn"/>
+            </column>
+            <column name="workspace_id" type="bigint">
+                <constraints foreignKeyName="time_entry_jn_workspace_id"
+                             referencedTableName="workspace_ref"
+                             referencedColumnNames="id"
+                             nullable="false"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints foreignKeyName="time_entry_jn_project_id"
+                             referencedTableName="project_ref"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints foreignKeyName="time_entry_jn_user_id"
+                             referencedTableName="user_ref"
+                             referencedColumnNames="id"
+                             nullable="false"/>
+            </column>
+            <column name="duration" type="bigint"/>
+            <column name="desc" type="varchar2(400)"/>
+
+            <column name="at" type="timestamp"/>
+            <column name="start" type="timestamp"/>
+            <column name="stop" type="timestamp"/>
+        </createTable>
+
+        <createIndex tableName="time_entry_jn" indexName="indx_time_entry_jn_workspace_id">
+            <column name="workspace_id"/>
+        </createIndex>
+        <createIndex tableName="time_entry_jn" indexName="indx_time_entry_jn_project_id">
+            <column name="project_id"/>
+        </createIndex>
+        <createIndex tableName="time_entry_jn" indexName="indx_time_entry_jn_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="time_entry_jn" indexName="indx_time_entry_jn_start">
+            <column name="start"/>
+        </createIndex>
+        <createIndex tableName="time_entry_jn" indexName="indx_time_entry_jn_at">
+            <column name="at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: togglCollector
+  liquibase:
+    change-log: classpath:changelog/db-changelog.xml
+    enabled: true
+    default-schema: toggl
+  #    liquibase-tablespace: toggl
+  datasource:
+    hikari:
+      pool-name: togglPool
+      maximum-pool-size: 15
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 1800000
+    driver-class-name: org.postgresql.Driver
+    testOnBorrow: true
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    username: toggl
+    password: toggl
+    url: jdbc:postgresql://localhost:5432/postgres
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+client:
+  toggl:
+    api-url: https://toggl.com/api/v9
+server:
+  port: 9080
